@@ -9,12 +9,17 @@ $requestPath = parse_url($requestUri, PHP_URL_PATH);
 
 // Enlever le préfixe /api si présent
 if (strpos($requestPath, '/api/') === 0) {
-    $requestPath = substr($requestPath, 4);
+    $requestPath = substr($requestPath, 4); // Enlève '/api'
 }
 
-// Si c'est la racine, servir index.php
-if ($requestPath === '/' || $requestPath === '') {
+// Si c'est la racine ou vide, servir index.php
+if ($requestPath === '/' || $requestPath === '' || $requestPath === '/api') {
     $requestPath = '/index.php';
+}
+
+// S'assurer que le chemin commence par /
+if (!str_starts_with($requestPath, '/')) {
+    $requestPath = '/' . $requestPath;
 }
 
 // Construire le chemin complet vers le fichier
@@ -24,10 +29,17 @@ $filePath = __DIR__ . '/api' . $requestPath;
 if (file_exists($filePath) && is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'php') {
     // Changer le répertoire de travail vers api/ pour que les require_once fonctionnent
     $originalDir = getcwd();
-    chdir(__DIR__ . '/api');
+    $apiDir = __DIR__ . '/api';
+    chdir($apiDir);
     
-    // Inclure le fichier
-    include $filePath;
+    // Inclure le fichier en utilisant le chemin relatif depuis api/
+    $relativePath = ltrim($requestPath, '/');
+    if (file_exists($relativePath)) {
+        include $relativePath;
+    } else {
+        // Fallback : inclure avec le chemin absolu
+        include $filePath;
+    }
     
     // Restaurer le répertoire original
     chdir($originalDir);
