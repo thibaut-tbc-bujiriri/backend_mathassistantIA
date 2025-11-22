@@ -22,7 +22,16 @@ $filePath = __DIR__ . '/api' . $requestPath;
 
 // Si le fichier existe et est un fichier PHP, l'inclure
 if (file_exists($filePath) && is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'php') {
-    return false; // Laisser PHP servir le fichier directement
+    // Changer le répertoire de travail vers api/ pour que les require_once fonctionnent
+    $originalDir = getcwd();
+    chdir(__DIR__ . '/api');
+    
+    // Inclure le fichier
+    include $filePath;
+    
+    // Restaurer le répertoire original
+    chdir($originalDir);
+    return true;
 }
 
 // Si c'est un fichier qui existe (images, CSS, etc.), le servir
