@@ -5,13 +5,15 @@
  */
 
 // Configuration CORS pour permettre les requêtes depuis le frontend React
-// Autoriser toutes les origines (en développement)
+// Autoriser les origines spécifiées
 $allowedOrigins = [
-    'http://localhost:5173',  // Vite dev server
-    'http://localhost:3000',   // Autre serveur dev possible
+    'http://localhost:5173',  // Vite dev server (local)
+    'http://localhost:3000',   // Autre serveur dev possible (local)
     'http://127.0.0.1:5173',
     'http://127.0.0.1:3000',
-    '*'
+    'https://mathassistant-app-ia.vercel.app',  // Frontend Vercel (production)
+    'https://mathassistant-app-ia.vercel.app/', // Avec slash
+    '*' // Fallback pour le développement
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
@@ -98,7 +100,9 @@ function handleCORS() {
         'http://localhost:3000',
         'http://127.0.0.1:5173',
         'http://127.0.0.1:3000',
-        '*'
+        'https://mathassistant-app-ia.vercel.app',  // Frontend Vercel (production)
+        'https://mathassistant-app-ia.vercel.app/', // Avec slash
+        '*' // Fallback pour le développement
     ];
     
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
