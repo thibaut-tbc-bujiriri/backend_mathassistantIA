@@ -7,9 +7,14 @@
 $requestUri = $_SERVER['REQUEST_URI'];
 $requestPath = parse_url($requestUri, PHP_URL_PATH);
 
+// Log pour débogage (peut être supprimé en production)
+error_log("Router: REQUEST_URI = $requestUri");
+error_log("Router: Parsed path = $requestPath");
+
 // Enlever le préfixe /api si présent
 if (strpos($requestPath, '/api/') === 0) {
     $requestPath = substr($requestPath, 4); // Enlève '/api'
+    error_log("Router: After removing /api, path = $requestPath");
 }
 
 // Si c'est la racine ou vide, servir index.php
@@ -24,6 +29,8 @@ if (!str_starts_with($requestPath, '/')) {
 
 // Construire le chemin complet vers le fichier
 $filePath = __DIR__ . '/api' . $requestPath;
+error_log("Router: Looking for file at: $filePath");
+error_log("Router: File exists? " . (file_exists($filePath) ? 'YES' : 'NO'));
 
 // Si le fichier existe et est un fichier PHP, l'inclure
 if (file_exists($filePath) && is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'php') {

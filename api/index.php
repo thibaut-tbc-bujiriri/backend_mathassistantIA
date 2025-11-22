@@ -22,8 +22,12 @@ $endpoints = [
     ]
 ];
 
-// Si c'est une requête à la racine, afficher les informations de l'API
-if ($_SERVER['REQUEST_URI'] === '/' || $_SERVER['REQUEST_URI'] === '/api/' || $_SERVER['REQUEST_URI'] === '/api/index.php') {
+// Vérifier si on est appelé depuis le router ou directement
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+$requestPath = parse_url($requestUri, PHP_URL_PATH);
+
+// Si c'est une requête à la racine ou index.php, afficher les informations de l'API
+if ($requestPath === '/' || $requestPath === '/api/' || $requestPath === '/api/index.php' || $requestPath === '/index.php' || empty($requestPath)) {
     sendJSONResponse([
         'success' => true,
         'message' => 'API Math Assistant - Backend',
@@ -34,10 +38,17 @@ if ($_SERVER['REQUEST_URI'] === '/' || $_SERVER['REQUEST_URI'] === '/api/' || $_
     ], 200);
 }
 
-// Si le fichier demandé n'existe pas, retourner une erreur 404
+// Si on arrive ici, c'est que le router n'a pas trouvé le fichier et a servi index.php
+// Retourner une erreur 404 avec plus de détails pour le débogage
 sendJSONResponse([
     'success' => false,
     'message' => 'Endpoint non trouvé',
-    'available_endpoints' => $endpoints
+    'request_uri' => $requestUri,
+    'request_path' => $requestPath,
+    'available_endpoints' => $endpoints,
+    'debug' => [
+        'script_name' => $_SERVER['SCRIPT_NAME'] ?? 'N/A',
+        'request_method' => $_SERVER['REQUEST_METHOD'] ?? 'N/A',
+    ]
 ], 404);
 
