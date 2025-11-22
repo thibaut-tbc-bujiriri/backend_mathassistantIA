@@ -1,0 +1,21 @@
+# Configuration Apache pour l'API PHP
+# Permet de gérer les erreurs et les réécritures d'URL
+
+# Activer le moteur de réécriture
+RewriteEngine On
+
+# Autoriser l'accès depuis toutes les origines (pour le développement)
+# En production, remplacez * par le domaine de votre frontend React
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+# Gérer les requêtes OPTIONS (preflight)
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# Afficher les erreurs PHP (pour le développement)
+# En production, désactivez ces lignes
+php_flag display_errors On
+php_value error_reporting E_ALL
+
