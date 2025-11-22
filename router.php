@@ -32,45 +32,11 @@ $filePath = __DIR__ . '/api' . $requestPath;
 error_log("Router: Looking for file at: $filePath");
 error_log("Router: File exists? " . (file_exists($filePath) ? 'YES' : 'NO'));
 
-// Si le fichier existe et est un fichier PHP, l'inclure
+// Si le fichier existe et est un fichier PHP, le laisser être servi par PHP
+// Le serveur PHP intégré le servira automatiquement si on retourne false
 if (file_exists($filePath) && is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'php') {
-    error_log("Router: Including file: $filePath");
-    
-    // Changer le répertoire de travail vers api/ pour que les require_once fonctionnent
-    $originalDir = getcwd();
-    $apiDir = __DIR__ . '/api';
-    chdir($apiDir);
-    
-    // Inclure le fichier en utilisant le chemin relatif depuis api/
-    $relativePath = ltrim($requestPath, '/');
-    error_log("Router: Relative path: $relativePath");
-    error_log("Router: Relative path exists? " . (file_exists($relativePath) ? 'YES' : 'NO'));
-    
-    if (file_exists($relativePath)) {
-        error_log("Router: Including relative path");
-        include $relativePath;
-    } else if (file_exists($filePath)) {
-        error_log("Router: Including absolute path");
-        include $filePath;
-    } else {
-        error_log("Router: ERROR - File not found in both locations!");
-        chdir($originalDir);
-        // Ne pas inclure index.php, retourner directement 404
-        http_response_code(404);
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => false,
-            'message' => 'Fichier PHP non trouvé',
-            'requested_path' => $requestPath,
-            'file_path' => $filePath,
-            'relative_path' => $relativePath
-        ]);
-        return true;
-    }
-    
-    // Restaurer le répertoire original
-    chdir($originalDir);
-    return true;
+    // Laisser PHP servir le fichier directement
+    return false;
 }
 
 // Si c'est un fichier qui existe (images, CSS, etc.), le servir
@@ -87,8 +53,8 @@ if (is_dir($filePath)) {
     }
 }
 
-// Sinon, servir index.php de api/
-$indexPath = __DIR__ . '/api/index.php';
+// Sinon, servir index.php (on est déjà dans api/)
+$indexPath = __DIR__ . '/index.php';
 if (file_exists($indexPath)) {
     include $indexPath;
     return true;
