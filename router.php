@@ -27,7 +27,8 @@ if (!str_starts_with($requestPath, '/')) {
     $requestPath = '/' . $requestPath;
 }
 
-// Construire le chemin complet vers le fichier
+// Avec -t api, le document root est api/, donc on cherche directement dans api/
+// router.php est dans la racine, donc __DIR__ pointe vers la racine
 $filePath = __DIR__ . '/api' . $requestPath;
 error_log("Router: Looking for file at: $filePath");
 error_log("Router: File exists? " . (file_exists($filePath) ? 'YES' : 'NO'));
@@ -35,6 +36,7 @@ error_log("Router: File exists? " . (file_exists($filePath) ? 'YES' : 'NO'));
 // Si le fichier existe et est un fichier PHP, le laisser être servi par PHP
 // Le serveur PHP intégré le servira automatiquement si on retourne false
 if (file_exists($filePath) && is_file($filePath) && pathinfo($filePath, PATHINFO_EXTENSION) === 'php') {
+    error_log("Router: Found PHP file, letting PHP serve it");
     // Laisser PHP servir le fichier directement
     return false;
 }
@@ -53,9 +55,10 @@ if (is_dir($filePath)) {
     }
 }
 
-// Sinon, servir index.php (on est déjà dans api/)
-$indexPath = __DIR__ . '/index.php';
+// Sinon, servir index.php de api/
+$indexPath = __DIR__ . '/api/index.php';
 if (file_exists($indexPath)) {
+    error_log("Router: Serving api/index.php");
     include $indexPath;
     return true;
 }
