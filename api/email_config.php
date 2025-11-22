@@ -9,10 +9,10 @@
  */
 
 // Adresse Gmail configurée
-$GMAIL_ADDRESS = 'thibauttbcbujiriri@gmail.com';
+$GMAIL_ADDRESS = getenv('GMAIL_ADDRESS') ?: 'YOUR_EMAIL@gmail.com';
 
 // Mot de passe d'application Gmail (sans espaces)
-$GMAIL_APP_PASSWORD = 'kjnxdopcoyrzqrgn';
+$GMAIL_APP_PASSWORD = getenv('GMAIL_APP_PASSWORD') ?: 'YOUR_GMAIL_APP_PASSWORD_HERE';
 
 // Retourner la configuration
 return [

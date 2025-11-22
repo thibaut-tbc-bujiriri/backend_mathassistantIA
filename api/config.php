@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 define('DB_HOST', 'localhost');
 define('DB_PORT', '3307');  // Port MySQL personnalisé (XAMPP)
 define('DB_NAME', 'mathassistant_bd');
-define('DB_USER', 'tbc');
-define('DB_PASS', 'thi@.32a');
+define('DB_USER', getenv('DB_USER') ?: 'tbc');
+define('DB_PASS', getenv('DB_PASS') ?: 'YOUR_DB_PASSWORD_HERE');
 
 // Fonction pour obtenir la connexion PDO
 function getDBConnection() {

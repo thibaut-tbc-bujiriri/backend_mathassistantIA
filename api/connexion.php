@@ -9,8 +9,8 @@
 $host = 'localhost';        // Serveur MySQL (par défaut pour XAMPP)
 $port = '3307';             // Port MySQL personnalisé (XAMPP)
 $dbname = 'mathassistant_bd';  // Nom de la base de données
-$username = 'tbc';         // Nom d'utilisateur par défaut XAMPP
-$password = 'thi@.32a';             // Mot de passe par défaut XAMPP (vide)
+$username = getenv('DB_USER') ?: 'tbc';         // Nom d'utilisateur par défaut XAMPP
+$password = getenv('DB_PASS') ?: 'YOUR_DB_PASSWORD_HERE';             // Mot de passe - utiliser variable d'environnement
 
 try {
     // Création de la connexion PDO
