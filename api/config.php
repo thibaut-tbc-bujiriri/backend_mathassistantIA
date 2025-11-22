@@ -34,11 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Configuration de la base de données
-define('DB_HOST', 'localhost');
-define('DB_PORT', '3307');  // Port MySQL personnalisé (XAMPP)
-define('DB_NAME', 'mathassistant_bd');
-define('DB_USER', getenv('DB_USER') ?: 'tbc');
-define('DB_PASS', getenv('DB_PASS') ?: 'YOUR_DB_PASSWORD_HERE');
+// Utilise les variables d'environnement pour Railway, avec des fallbacks pour XAMPP local
+define('DB_HOST', getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: getenv('MYSQL_HOST') ?: 'localhost');
+define('DB_PORT', getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: getenv('MYSQL_PORT') ?: '3307');  // Port MySQL (3306 pour Railway, 3307 pour XAMPP)
+define('DB_NAME', getenv('DB_NAME') ?: getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'mathassistant_bd');
+define('DB_USER', getenv('DB_USER') ?: getenv('MYSQLUSER') ?: getenv('MYSQL_USER') ?: 'tbc');
+define('DB_PASS', getenv('DB_PASS') ?: getenv('MYSQLPASSWORD') ?: getenv('MYSQL_PASSWORD') ?: 'YOUR_DB_PASSWORD_HERE');
 
 // Fonction pour obtenir la connexion PDO
 function getDBConnection() {
