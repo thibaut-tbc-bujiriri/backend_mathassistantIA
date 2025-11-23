@@ -25,9 +25,13 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-di
 # Copier le reste de l'application
 COPY . .
 
+# Copier et rendre exécutable le script de démarrage
+COPY start-server.sh /app/start-server.sh
+RUN chmod +x /app/start-server.sh
+
 # Exposer le port (Railway définit PORT automatiquement)
 EXPOSE 8080
 
 # Commande de démarrage
-CMD ["sh", "-c", "php -S 0.0.0.0:${PORT:-8080} router.php"]
+CMD ["/app/start-server.sh"]
 
