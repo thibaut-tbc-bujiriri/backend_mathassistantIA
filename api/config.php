@@ -4,6 +4,26 @@
  * Contient les paramètres de configuration généraux
  */
 
+// Charger le fichier .env en local (si disponible)
+// En production sur Railway, les variables d'environnement sont déjà définies
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    // Vérifier si Composer autoload est disponible
+    $autoloadPath = __DIR__ . '/../vendor/autoload.php';
+    if (file_exists($autoloadPath)) {
+        require_once $autoloadPath;
+        
+        // Charger le fichier .env
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+            $dotenv->load();
+        } catch (Exception $e) {
+            // Ignorer silencieusement si le .env ne peut pas être chargé
+            // Les variables d'environnement système seront utilisées à la place
+        }
+    }
+}
+
 // Configuration CORS pour permettre les requêtes depuis le frontend React
 // Autoriser les origines spécifiées
 $allowedOrigins = [
@@ -34,12 +54,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Configuration de la base de données
-// Utilise les variables d'environnement pour Railway, avec des fallbacks pour XAMPP local
-define('DB_HOST', getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: getenv('MYSQL_HOST') ?: 'localhost');
-define('DB_PORT', getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: getenv('MYSQL_PORT') ?: '3307');  // Port MySQL (3306 pour Railway, 3307 pour XAMPP)
-define('DB_NAME', getenv('DB_NAME') ?: getenv('MYSQLDATABASE') ?: getenv('MYSQL_DATABASE') ?: 'mathassistant_bd');
-define('DB_USER', getenv('DB_USER') ?: getenv('MYSQLUSER') ?: getenv('MYSQL_USER') ?: 'tbc');
-define('DB_PASS', getenv('DB_PASS') ?: getenv('MYSQLPASSWORD') ?: getenv('MYSQL_PASSWORD') ?: 'YOUR_DB_PASSWORD_HERE');
+// Priorité : Variables d'environnement système (Railway) > .env (local) > valeurs par défaut
+// Note: $_ENV est rempli par Dotenv si .env est chargé, sinon utilise getenv()
+$getEnvVar = function($key, $default = null) {
+    // Essayer $_ENV d'abord (rempli par Dotenv si .env est chargé)
+    if (isset($_ENV[$key]) && !empty($_ENV[$key])) {
+        return $_ENV[$key];
+    }
+    // Sinon essayer getenv() (variables d'environnement système)
+    $value = getenv($key);
+    if ($value !== false && !empty($value)) {
+        return $value;
+    }
+    // Sinon utiliser la valeur par défaut
+    return $default;
+};
+
+define('DB_HOST', $getEnvVar('DB_HOST') ?: $getEnvVar('MYSQLHOST') ?: $getEnvVar('MYSQL_HOST') ?: 'localhost');
+define('DB_PORT', $getEnvVar('DB_PORT') ?: $getEnvVar('MYSQLPORT') ?: $getEnvVar('MYSQL_PORT') ?: '3307');  // Port MySQL (3306 pour Railway, 3307 pour XAMPP)
+define('DB_NAME', $getEnvVar('DB_NAME') ?: $getEnvVar('MYSQLDATABASE') ?: $getEnvVar('MYSQL_DATABASE') ?: 'mathassistant_bd');
+define('DB_USER', $getEnvVar('DB_USER') ?: $getEnvVar('MYSQLUSER') ?: $getEnvVar('MYSQL_USER') ?: 'tbc');
+define('DB_PASS', $getEnvVar('DB_PASSWORD') ?: $getEnvVar('DB_PASS') ?: $getEnvVar('MYSQLPASSWORD') ?: $getEnvVar('MYSQL_PASSWORD') ?: 'YOUR_DB_PASSWORD_HERE');
 
 // Fonction pour obtenir la connexion PDO
 function getDBConnection() {
