@@ -1,9 +1,13 @@
 FROM php:8.2-cli
 
-# Installer git (nécessaire pour Composer)
+# Installer git, unzip et l'extension PHP zip (nécessaires pour Composer)
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
+    libzip-dev \
+    zip \
+    && docker-php-ext-install zip \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Installer Composer
@@ -16,7 +20,7 @@ WORKDIR /app
 COPY composer.json composer.lock* ./
 
 # Installer les dépendances
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 # Copier le reste de l'application
 COPY . .
