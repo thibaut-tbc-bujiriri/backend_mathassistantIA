@@ -2,7 +2,8 @@
 /**
  * Endpoint API pour la connexion (Login)
  * Méthode: POST
- * URL: http://localhost:8080/Math_AssistantApp/api/login.php
+ * URL: /api/login.php
+ * Production: https://backendmathassistantia-production.up.railway.app/api/login.php
  * 
  * Paramètres JSON attendus:
  * {

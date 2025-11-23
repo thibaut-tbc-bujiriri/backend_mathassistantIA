@@ -2,7 +2,8 @@
 /**
  * Endpoint API pour réinitialiser le mot de passe
  * Méthode: POST
- * URL: http://localhost:8080/Math_AssistantApp/api/reset_password.php
+ * URL: /api/reset_password.php
+ * Production: https://backendmathassistantia-production.up.railway.app/api/reset_password.php
  * 
  * Paramètres JSON attendus:
  * {

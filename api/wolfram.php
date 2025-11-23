@@ -30,7 +30,7 @@ try {
     // WolframAlpha comprend généralement le LaTeX, mais on peut aussi envoyer du texte
     $query = urlencode($latex);
     
-    $url = "http://api.wolframalpha.com/v2/query?input={$query}&appid={$appId}&output=json";
+    $url = "https://api.wolframalpha.com/v2/query?input={$query}&appid={$appId}&output=json";
     
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

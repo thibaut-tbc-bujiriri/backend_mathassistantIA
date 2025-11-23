@@ -235,3 +235,4 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
 - Les tables n'ont pas été créées
 - Exécutez les scripts SQL (`database.sql` et `password_reset_tokens.sql`)
 
+

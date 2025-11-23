@@ -106,7 +106,7 @@ try {
     
     if (!empty($wolframAppId)) {
         $query = urlencode($latex);
-        $wolframUrl = "http://api.wolframalpha.com/v2/query?input={$query}&appid={$wolframAppId}&output=json";
+        $wolframUrl = "https://api.wolframalpha.com/v2/query?input={$query}&appid={$wolframAppId}&output=json";
         
         $ch = curl_init($wolframUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -275,4 +275,5 @@ function parseExplanationIntoSteps($explanation) {
     return $steps;
 }
 ?>
+
 

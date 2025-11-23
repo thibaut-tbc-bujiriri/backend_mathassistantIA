@@ -27,18 +27,20 @@ if (file_exists($envFile)) {
 // Configuration CORS pour permettre les requêtes depuis le frontend React
 // Autoriser les origines spécifiées
 $allowedOrigins = [
+    'https://mathassistant-app-ia.vercel.app',  // Frontend Vercel (production) - PRIORITAIRE
+    'https://mathassistant-app-ia.vercel.app/', // Avec slash
     'http://localhost:5173',  // Vite dev server (local)
     'http://localhost:3000',   // Autre serveur dev possible (local)
     'http://127.0.0.1:5173',
-    'http://127.0.0.1:3000',
-    'https://mathassistant-app-ia.vercel.app',  // Frontend Vercel (production)
-    'https://mathassistant-app-ia.vercel.app/', // Avec slash
-    '*' // Fallback pour le développement
+    'http://127.0.0.1:3000'
 ];
 
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
-if (in_array($origin, $allowedOrigins) || in_array('*', $allowedOrigins)) {
-    header('Access-Control-Allow-Origin: ' . ($origin === '*' ? '*' : $origin));
+$origin = $_SERVER['HTTP_ORIGIN'] ?? null;
+if ($origin && in_array($origin, $allowedOrigins)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} elseif (!$origin) {
+    // Si pas d'origine (requête directe), autoriser quand même pour le développement
+    header('Access-Control-Allow-Origin: *');
 }
 
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -132,18 +134,20 @@ function sendJSONResponseHelper($success, $message, $data = null, $statusCode = 
 // Fonction pour gérer CORS
 function handleCORS() {
     $allowedOrigins = [
+        'https://mathassistant-app-ia.vercel.app',  // Frontend Vercel (production) - PRIORITAIRE
+        'https://mathassistant-app-ia.vercel.app/', // Avec slash
         'http://localhost:5173',
         'http://localhost:3000',
         'http://127.0.0.1:5173',
-        'http://127.0.0.1:3000',
-        'https://mathassistant-app-ia.vercel.app',  // Frontend Vercel (production)
-        'https://mathassistant-app-ia.vercel.app/', // Avec slash
-        '*' // Fallback pour le développement
+        'http://127.0.0.1:3000'
     ];
     
-    $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
-    if (in_array($origin, $allowedOrigins) || in_array('*', $allowedOrigins)) {
-        header('Access-Control-Allow-Origin: ' . ($origin === '*' ? '*' : $origin));
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? null;
+    if ($origin && in_array($origin, $allowedOrigins)) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+    } elseif (!$origin) {
+        // Si pas d'origine (requête directe), autoriser quand même pour le développement
+        header('Access-Control-Allow-Origin: *');
     }
     
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');

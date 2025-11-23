@@ -2,7 +2,8 @@
 /**
  * Endpoint API pour l'inscription (Sign Up)
  * Méthode: POST
- * URL: http://localhost:8080/Math_AssistantApp/api/register.php
+ * URL: /api/register.php
+ * Production: https://backendmathassistantia-production.up.railway.app/api/register.php
  * 
  * Paramètres JSON attendus:
  * {

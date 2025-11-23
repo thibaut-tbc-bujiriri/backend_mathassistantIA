@@ -2,15 +2,42 @@
 /**
  * Fichier de connexion à la base de données MySQL
  * Base de données: mathassistant_bd
- * Serveur: localhost (XAMPP)
+ * Utilise les variables d'environnement pour la configuration
  */
 
-// Configuration de la connexion
-$host = 'localhost';        // Serveur MySQL (par défaut pour XAMPP)
-$port = '3307';             // Port MySQL personnalisé (XAMPP)
-$dbname = 'mathassistant_bd';  // Nom de la base de données
-$username = getenv('DB_USER') ?: 'tbc';         // Nom d'utilisateur par défaut XAMPP
-$password = getenv('DB_PASS') ?: 'YOUR_DB_PASSWORD_HERE';             // Mot de passe - utiliser variable d'environnement
+// Charger le fichier .env en local (si disponible)
+$envFile = __DIR__ . '/../.env';
+if (file_exists($envFile)) {
+    $autoloadPath = __DIR__ . '/../vendor/autoload.php';
+    if (file_exists($autoloadPath)) {
+        require_once $autoloadPath;
+        try {
+            $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+            $dotenv->load();
+        } catch (Exception $e) {
+            // Ignorer silencieusement si le .env ne peut pas être chargé
+        }
+    }
+}
+
+// Fonction helper pour obtenir les variables d'environnement
+$getEnvVar = function($key, $default = null) {
+    if (isset($_ENV[$key]) && !empty($_ENV[$key])) {
+        return $_ENV[$key];
+    }
+    $value = getenv($key);
+    if ($value !== false && !empty($value)) {
+        return $value;
+    }
+    return $default;
+};
+
+// Configuration de la connexion - Priorité : Variables d'environnement > .env > valeurs par défaut
+$host = $getEnvVar('DB_HOST') ?: $getEnvVar('MYSQLHOST') ?: $getEnvVar('MYSQL_HOST') ?: 'localhost';
+$port = $getEnvVar('DB_PORT') ?: $getEnvVar('MYSQLPORT') ?: $getEnvVar('MYSQL_PORT') ?: '3307';
+$dbname = $getEnvVar('DB_NAME') ?: $getEnvVar('MYSQLDATABASE') ?: $getEnvVar('MYSQL_DATABASE') ?: 'mathassistant_bd';
+$username = $getEnvVar('DB_USER') ?: $getEnvVar('MYSQLUSER') ?: $getEnvVar('MYSQL_USER') ?: 'tbc';
+$password = $getEnvVar('DB_PASSWORD') ?: $getEnvVar('DB_PASS') ?: $getEnvVar('MYSQLPASSWORD') ?: $getEnvVar('MYSQL_PASSWORD') ?: 'YOUR_DB_PASSWORD_HERE';
 
 try {
     // Création de la connexion PDO
