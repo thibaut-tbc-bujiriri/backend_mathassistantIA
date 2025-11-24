@@ -12,6 +12,23 @@
  * }
  */
 
+// Désactiver l'affichage des erreurs pour éviter les warnings dans le JSON
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Headers CORS
+header("Access-Control-Allow-Origin: https://mathassistant-app-ia.vercel.app");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Content-Type: application/json; charset=utf-8");
+
+// Gérer les requêtes OPTIONS (preflight)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 require_once 'config.php';
 
 // Vérifier que la méthode est POST
